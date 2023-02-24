@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from DSUtils.data import (
     data_overview,
+    generate_target_bins,
     missing_data,
     reduce_mem_usage,
     returnMatches,
@@ -102,14 +103,34 @@ def test_reduce_mem_usage():
     assert df["D"].dtype == np.float16
 
 
-def main():
+def target_generate_target_bins():
+    """Test generate_target_bins method"""
+
+    df = pd.DataFrame(
+        {
+            "A": [1, 2, 3, 4, 5],
+            "B": ["a", "b", "c", "d", "e"],
+            "C": [3, "b", 5, "d", 7],
+            "D": [1.0, 2.0, np.nan, 4.0, 5.0],
+        }
+    )
+
+    df = generate_target_bins([-1, 2, 4, np.inf], df, "A")
+    assert df["A_bins"].tolist() == ["0-2", "0-2", "3-4", "3-4", "5+"]
+
+    df = generate_target_bins([-1, 1, 3], df, "A")
+    assert df["A_bins"].tolist() == ["0-1", "2-3", "2-3", np.nan, np.nan]
+
+
+def test_data():
     test_data_overview()
     test_missing_data()
     test_returnNotMatches()
     test_returnMatches()
     test_reduce_mem_usage()
+    target_generate_target_bins()
     print("All data tests passed! :)")
 
 
 if __name__ == "__main__":
-    main()
+    test_data()

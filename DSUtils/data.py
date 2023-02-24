@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pandas as pd
 
@@ -129,3 +131,62 @@ def reduce_mem_usage(df, verbose=True):
             )
         )
     return df
+
+
+def generate_target_bins(bins: List[int], df: pd.DataFrame, target: str):
+    """Method for generating a set of bins for the target column
+
+    Args:
+        bins : List of integers
+            List of range between target bins. The target bins will span
+            the gap between then entries in this list and will always start at n+1.
+            Therefore, to start the class at 0, one should let the first entry in the
+            list be -1. See Example usage for example.
+        df : pd.DataFrame
+            Dataframe with terminal data. Must contain target column
+        target : String
+            Name of the target column to be binned
+
+    Returns:
+        df_copy: Copy of df with target bins
+
+    Raises:
+        KeyError: if the target is not in df
+        ValueError: if bins is not increasing monotonically
+
+    Example usage:
+        ### With np.inf as final class ###
+        Input bins: [-1, 3, 7, 11, 15, np.inf]
+        Output labels: ['0-3', '4-7', '8-11', '12-15', '16+']
+
+        ### With finite int as final class ###
+        Input bins: [-1, 6, 13, 20, 27]
+        Output labels: ['0-6', '7-13', '14-20', '21-27']
+    """
+
+    # Ensure that target column exists in df
+    if target not in df.columns:
+        raise KeyError(f"Target column {target} not in DataFrame")
+
+    # Ensure that bins are increasing monotonically
+    if not sorted(bins) == bins:
+        raise ValueError(f"bins must increase monotonically")
+
+    # Copy dataframe to avoid overwriting
+    df_copy = df.copy(deep=True)
+
+    # Generate class names based on bins
+    n_bins = len(bins) - 1
+    labels = [f"{b1+1}-{b2}" for b1, b2 in zip(bins[0 : (n_bins - 1)], bins[1:n_bins])]
+
+    # Check if final class is infinity -> then add last class+ as name
+    if bins[-1] == np.inf:
+        labels = labels + [f"{bins[-2]+1}+"]
+    else:
+        labels = labels + [f"{bins[-2]+1}-{bins[-1]}"]
+
+    # Add target bins to dataframe (copy)
+    target_bins = f"{target}_bins"
+    df_copy[target_bins] = pd.cut(df_copy[target], bins, labels=labels)
+
+    return df_copy
