@@ -1,0 +1,7 @@
+matplotlib==3.4.3
+numpy==1.23.5
+pandas==1.5.2
+scikit_learn==1.2.1
+scipy==1.10.1
+seaborn==0.11.1
+setuptools==52.0.0.post20210125
