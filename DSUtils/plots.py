@@ -10,11 +10,11 @@ from scipy.stats import norm
 from sklearn.model_selection import learning_curve
 
 
-def correlation_heatmap(data: pd.DataFrame, h=10, w=10, cmap="coolwarm"):
-    """ "Method for plotting a correlation heatmap
+def correlation_heatmap(df: pd.DataFrame, h=10, w=10, cmap="coolwarm"):
+    """Method for plotting a correlation heatmap
 
     Args:
-        data : Pandas dataframe
+        df : Pandas dataframe
             Dataframe to plot correlations for
         h : int
             Height of plot
@@ -26,8 +26,8 @@ def correlation_heatmap(data: pd.DataFrame, h=10, w=10, cmap="coolwarm"):
     Returns:
         None
     """
-    data = data.select_dtypes("number")
-    correlations = data.corr()
+    df = df.select_dtypes("number")
+    correlations = df.corr()
 
     fig, ax = plt.subplots(figsize=(h, w))
     sns.heatmap(
@@ -46,6 +46,21 @@ def correlation_heatmap(data: pd.DataFrame, h=10, w=10, cmap="coolwarm"):
 
 
 def heatmap(correlations, h=10, w=10, cmap="coolwarm"):
+    """Method for plotting a heatmap of the correlations between features
+
+    Args:
+        correlations : array-like
+        h : int
+            Height of plot
+        w : int
+            Width of plot
+        cmap : seaborn Colormap
+            Colomarp of the correlation heatmap
+
+    Returns:
+        None
+    """
+
     fig, ax = plt.subplots(figsize=(h, w))
     sns.heatmap(
         correlations,

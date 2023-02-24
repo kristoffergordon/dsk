@@ -2,8 +2,26 @@ import numpy as np
 import pandas as pd
 
 
-def dataOverview(df, sort_by_missing=False):
-    # Preliminary data overview
+def data_overview(df, sort_by_missing=False):
+    """Method for getting an preliminary data overview
+
+    Args:
+        df : Pandas dataframe
+            Dataframe to get an overview of
+        sort_by_missing : bool
+            Sort the overview by missing values
+
+    Returns:
+        overview_df : Pandas dataframe
+            Dataframe with an overview of the data
+
+    Raises:
+        TypeError: If df is not a pandas dataframe
+    """
+
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas dataframe")
+
     uniques = df.nunique()
     dtypes = df.dtypes
     total = df.isnull().sum().sort_values()
@@ -25,26 +43,55 @@ def dataOverview(df, sort_by_missing=False):
     return overview_df
 
 
-def missingData(df):
+def missing_data(df):
+    """Method for getting an overview of missing data
+
+    Args:
+        df : Pandas dataframe
+            Dataframe to get an overview of
+
+    returns:
+        missing_data : Pandas dataframe
+            Dataframe with an overview of missing data
+    """
+
     # missing data
     total = df.isnull().sum().sort_values(ascending=False)
-    percent = (df.isnull().sum() / df.isnull().count()).sort_values(
-        ascending=False
-    ) * 100
+    percent = df.isnull().sum() / df.isnull().count()
+    percent = percent.sort_values(ascending=False) * 100
     missing_data = pd.concat([total, percent], axis=1, keys=["Total", "Percent"])
     return missing_data
 
 
 def returnNotMatches(a, b):
+    """Method for returning values in b that are not in a"""
     return [x for x in b if x not in a]
 
 
 def returnMatches(a, b):
+    """Method for returning values in b that are also in a"""
     return [x for x in b if x in a]
 
 
 def reduce_mem_usage(df, verbose=True):
-    """Simple method for reducing memory usage of a dataframe"""
+    """Simple method for reducing memory usage of a dataframe
+
+    Args:
+        df : Pandas dataframe
+            Dataframe to reduce memory usage of
+        verbose : bool
+            Print memory usage before and after reduction
+
+    Returns:
+        df : Pandas dataframe
+            Dataframe with reduced memory usage
+    Raises:
+        TypeError: If df is not a pandas dataframe
+    """
+
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas dataframe")
+
     numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
     start_mem = df.memory_usage().sum() / 1024 ** 2
     for col in df.columns:
