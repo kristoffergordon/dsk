@@ -8,3 +8,6 @@ DSUtils.egg-info/PKG-INFO
 DSUtils.egg-info/SOURCES.txt
 DSUtils.egg-info/dependency_links.txt
 DSUtils.egg-info/top_level.txt
+DSUtils/__pycache__/data.cpython-38.pyc
+DSUtils/__pycache__/plots.cpython-38.pyc
+tests/test_data.py

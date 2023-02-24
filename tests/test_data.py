@@ -54,7 +54,7 @@ def test_missing_data():
     missing = missing_data(df)
 
     assert missing.shape == (4, 2)
-    assert missing.index.tolist() == ["A", "B", "C", "D"]
+    assert missing.index.tolist() == ["D", "A", "B", "C"]
     assert missing.columns.tolist() == ["Total", "Percent"]
     assert missing["Total"].tolist() == [1, 0, 0, 0]
     assert missing["Percent"].tolist() == [20.0, 0.0, 0.0, 0.0]
@@ -94,9 +94,22 @@ def test_reduce_mem_usage():
         }
     )
 
-    df = reduce_mem_usage(df)
+    df = reduce_mem_usage(df, verbose=False)
 
     assert df["A"].dtype == np.int8
     assert df["B"].dtype == object
     assert df["C"].dtype == object
     assert df["D"].dtype == np.float16
+
+
+def main():
+    test_data_overview()
+    test_missing_data()
+    test_returnNotMatches()
+    test_returnMatches()
+    test_reduce_mem_usage()
+    print("All data tests passed! :)")
+
+
+if __name__ == "__main__":
+    main()
