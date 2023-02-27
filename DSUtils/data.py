@@ -2,6 +2,7 @@ from typing import List
 
 import numpy as np
 import pandas as pd
+import pandas.api.types as ptypes
 
 
 def data_overview(df, sort_by_missing=False):
@@ -152,6 +153,7 @@ def generate_target_bins(bins: List[int], df: pd.DataFrame, target: str):
 
     Raises:
         KeyError: if the target is not in df
+        TypeError: if bins is not a list or if target is not numeric
         ValueError: if bins is not increasing monotonically
 
     Example usage:
@@ -167,6 +169,12 @@ def generate_target_bins(bins: List[int], df: pd.DataFrame, target: str):
     # Ensure that target column exists in df
     if target not in df.columns:
         raise KeyError(f"Target column {target} not in DataFrame")
+
+    if not isinstance(bins, list):
+        raise TypeError(f"bins must be a list")
+
+    if not ptypes.is_numeric_dtype(df[target]):
+        raise TypeError(f"target must be numeric")
 
     # Ensure that bins are increasing monotonically
     if not sorted(bins) == bins:
