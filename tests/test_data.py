@@ -120,17 +120,3 @@ def target_generate_target_bins():
 
     df = generate_target_bins([-1, 1, 3], df, "A")
     assert df["A_bins"].tolist() == ["0-1", "2-3", "2-3", np.nan, np.nan]
-
-
-def test_data():
-    test_data_overview()
-    test_missing_data()
-    test_returnNotMatches()
-    test_returnMatches()
-    test_reduce_mem_usage()
-    target_generate_target_bins()
-    print("All data tests passed! :)")
-
-
-if __name__ == "__main__":
-    test_data()
