@@ -23,13 +23,13 @@ def test_data_overview():
         }
     )
 
-    overview = data_overview(df)
+    overview = data_overview(df, sort_by_missing=True)
 
     with pytest.raises(TypeError):
         data_overview("df")
 
     assert overview.shape == (4, 5)
-    assert overview.index.tolist() == ["A", "B", "C", "D"]
+    assert overview.index.tolist() == ["D", "A", "B", "C"]
     assert overview.columns.tolist() == [
         "Sample",
         "Count uniques",
@@ -38,10 +38,10 @@ def test_data_overview():
         "Pct. missing",
     ]
     assert overview.loc["A"].tolist() == ["1", 5, int, 0, 0.0]
-    assert overview["Count uniques"].tolist() == [5, 5, 5, 4]
-    assert overview["dtype"].tolist() == [int, object, object, float]
-    assert overview["Count missing"].tolist() == [0, 0, 0, 1]
-    assert overview["Pct. missing"].tolist() == [0.0, 0.0, 0.0, 20.0]
+    assert overview["Count uniques"].tolist() == [4, 5, 5, 5]
+    assert overview["dtype"].tolist() == [float, int, object, object]
+    assert overview["Count missing"].tolist() == [1, 0, 0, 0]
+    assert overview["Pct. missing"].tolist() == [20.0, 0.0, 0.0, 0.0]
 
 
 def test_missing_data():
@@ -93,21 +93,29 @@ def test_reduce_mem_usage():
     df = pd.DataFrame(
         {
             "A": [1, 2, 3, 4, 5],
-            "B": ["a", "b", "c", "d", "e"],
-            "C": [3, "b", 5, "d", 7],
-            "D": [1.0, 2.0, np.nan, 4.0, 5.0],
+            "B": [2 ** 10, 4, 6, 8, 10],
+            "C": [2 ** 17, 4, 6, 8, 10],
+            "D": [2 ** 32, 4, 6, 8, 10],
+            "E": [1.0, 2.0, np.nan, 4.0, 5.0],
+            "F": [1.0, 2.0 ** 17, 3.0, 4.0, 5.0],
+            "G": [1.0, 2.0 ** 250, 3.0, 4.0, 5.0],
+            "H": ["a", "b", "c", "d", "e"],
         }
     )
 
-    df = reduce_mem_usage(df, verbose=False)
+    df = reduce_mem_usage(df, verbose=True)
 
     with pytest.raises(TypeError):
-        data_overview("df")
+        reduce_mem_usage("df")
 
     assert df["A"].dtype == np.int8
-    assert df["B"].dtype == object
-    assert df["C"].dtype == object
-    assert df["D"].dtype == np.float16
+    assert df["B"].dtype == np.int16
+    assert df["C"].dtype == np.int32
+    assert df["D"].dtype == np.int64
+    assert df["E"].dtype == np.float16
+    assert df["F"].dtype == np.float32
+    assert df["G"].dtype == np.float64
+    assert df["H"].dtype == object
 
 
 def test_generate_target_bins():
