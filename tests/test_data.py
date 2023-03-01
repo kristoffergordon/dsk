@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from DSUtils.data import (
     data_overview,
     generate_target_bins,
@@ -23,6 +24,9 @@ def test_data_overview():
     )
 
     overview = data_overview(df)
+
+    with pytest.raises(TypeError):
+        data_overview("df")
 
     assert overview.shape == (4, 5)
     assert overview.index.tolist() == ["A", "B", "C", "D"]
@@ -97,13 +101,16 @@ def test_reduce_mem_usage():
 
     df = reduce_mem_usage(df, verbose=False)
 
+    with pytest.raises(TypeError):
+        data_overview("df")
+
     assert df["A"].dtype == np.int8
     assert df["B"].dtype == object
     assert df["C"].dtype == object
     assert df["D"].dtype == np.float16
 
 
-def target_generate_target_bins():
+def test_generate_target_bins():
     """Test generate_target_bins method"""
 
     df = pd.DataFrame(
@@ -114,6 +121,22 @@ def target_generate_target_bins():
             "D": [1.0, 2.0, np.nan, 4.0, 5.0],
         }
     )
+
+    # Ensure target is in df
+    with pytest.raises(KeyError):
+        generate_target_bins([-1, 2, 4, np.inf], df, "E")
+
+    # Ensure bins are a list
+    with pytest.raises(TypeError):
+        generate_target_bins(-1, df, "A")
+
+    # Ensure target is numeric
+    with pytest.raises(TypeError):
+        generate_target_bins([1, 2, 3], df, "B")
+
+    # Ensure bins are increasing monotonically
+    with pytest.raises(ValueError):
+        generate_target_bins([1, 2, 3, 1], df, "A")
 
     df = generate_target_bins([-1, 2, 4, np.inf], df, "A")
     assert df["A_bins"].tolist() == ["0-2", "0-2", "3-4", "3-4", "5+"]
