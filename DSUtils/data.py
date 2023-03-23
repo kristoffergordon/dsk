@@ -96,7 +96,7 @@ def reduce_mem_usage(df, verbose=True):
         raise TypeError("df must be a pandas dataframe")
 
     numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
-    start_mem = df.memory_usage().sum() / 1024 ** 2
+    start_mem = df.memory_usage().sum() / 1024**2
     for col in df.columns:
         col_type = df[col].dtypes
         if col_type in numerics:
@@ -124,7 +124,7 @@ def reduce_mem_usage(df, verbose=True):
                     df[col] = df[col].astype(np.float32)
                 else:
                     df[col] = df[col].astype(np.float64)
-    end_mem = df.memory_usage().sum() / 1024 ** 2
+    end_mem = df.memory_usage().sum() / 1024**2
     if verbose:
         med_red = 100 * (start_mem - end_mem) / start_mem
         print(f"Mem. usage decreased to {end_mem:5.2f} Mb ({med_red:.1f}% reduction)")
