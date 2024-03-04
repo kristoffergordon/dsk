@@ -66,69 +66,69 @@ def missing_data(df):
     return missing_data
 
 
-def returnNotMatches(a, b):
+def return_not_matches(a, b):
     """Method for returning values in b that are not in a"""
     return [x for x in b if x not in a]
 
 
-def returnMatches(a, b):
+def return_matches(a, b):
     """Method for returning values in b that are also in a"""
     return [x for x in b if x in a]
 
 
 def reduce_mem_usage(df, verbose=True):
-    """Simple method for reducing memory usage of a dataframe
-
-    Args:
-        df : Pandas dataframe
-            Dataframe to reduce memory usage of
-        verbose : bool
-            Print memory usage before and after reduction
-
-    Returns:
-        df : Pandas dataframe
-            Dataframe with reduced memory usage
-    Raises:
-        TypeError: If df is not a pandas dataframe
-    """
-
     if not isinstance(df, pd.DataFrame):
         raise TypeError("df must be a pandas dataframe")
 
-    numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
     start_mem = df.memory_usage().sum() / 1024**2
-    for col in df.columns:
-        col_type = df[col].dtypes
-        if col_type in numerics:
-            c_min = df[col].min()
-            c_max = df[col].max()
-            if str(col_type)[:3] == "int":
-                if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
-                    df[col] = df[col].astype(np.int8)
-                elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
-                    df[col] = df[col].astype(np.int16)
-                elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
-                    df[col] = df[col].astype(np.int32)
-                elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
-                    df[col] = df[col].astype(np.int64)
-            else:
-                if (
-                    c_min > np.finfo(np.float16).min
-                    and c_max < np.finfo(np.float16).max
-                ):
-                    df[col] = df[col].astype(np.float16)
-                elif (
-                    c_min > np.finfo(np.float32).min
-                    and c_max < np.finfo(np.float32).max
-                ):
-                    df[col] = df[col].astype(np.float32)
-                else:
-                    df[col] = df[col].astype(np.float64)
+    df = convert_df(df)
     end_mem = df.memory_usage().sum() / 1024**2
+
     if verbose:
         med_red = 100 * (start_mem - end_mem) / start_mem
         print(f"Mem. usage decreased to {end_mem:5.2f} Mb ({med_red:.1f}% reduction)")
+
     return df
+
+
+def convert_df(df):
+    numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
+    for col in df.columns:
+        col_type = df[col].dtypes
+        if col_type in numerics:
+            df[col] = convert_col(df[col], col_type)
+    return df
+
+
+def convert_col(col, col_type):
+    c_min = col.min()
+    c_max = col.max()
+    if str(col_type).startswith("int"):
+        return convert_int_col(col, c_min, c_max)
+    else:
+        return convert_float_col(col, c_min, c_max)
+
+
+def convert_int_col(col, c_min, c_max):
+    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+        return col.astype(np.int8)
+    elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+        return col.astype(np.int16)
+    elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+        return col.astype(np.int32)
+    elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
+        return col.astype(np.int64)
+    else:
+        return col
+
+
+def convert_float_col(col, c_min, c_max):
+    if c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
+        return col.astype(np.float16)
+    elif c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
+        return col.astype(np.float32)
+    else:
+        return col.astype(np.float64)
 
 
 def generate_target_bins(bins: List[int], df: pd.DataFrame, target: str):
@@ -168,14 +168,14 @@ def generate_target_bins(bins: List[int], df: pd.DataFrame, target: str):
         raise KeyError(f"Target column {target} not in DataFrame")
 
     if not isinstance(bins, list):
-        raise TypeError(f"bins must be a list")
+        raise TypeError("bins must be a list")
 
     if not ptypes.is_numeric_dtype(df[target]):
-        raise TypeError(f"target must be numeric")
+        raise TypeError("target must be numeric")
 
     # Ensure that bins are increasing monotonically
-    if not sorted(bins) == bins:
-        raise ValueError(f"bins must increase monotonically")
+    if sorted(bins) != bins:
+        raise ValueError("bins must increase monotonically")
 
     # Copy dataframe to avoid overwriting
     df_copy = df.copy(deep=True)
