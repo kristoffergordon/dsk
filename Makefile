@@ -24,7 +24,7 @@ coverage:  ## Run pytest with coverage
 	@poetry run pytest --cov=src --cov-report=term-missing --cov-report=xml tests/
 
 .PHONY: test
-test-unit:  ## Run unit tests
+test:  ## Run unit tests
 	@poetry run pytest
 
 .PHONY: help
