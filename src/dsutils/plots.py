@@ -78,7 +78,7 @@ def heatmap(correlations, h=10, w=10, cmap="coolwarm"):
 
 
 # histogram and normal probability plot
-def probplts(y):
+def probplots(y):
     _, (ax_top, _) = plt.subplots(2, figsize=(6, 11))
     plt.subplots_adjust(hspace=0.4)
     sns.histplot(y, kde=True, ax=ax_top)
