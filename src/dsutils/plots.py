@@ -29,7 +29,7 @@ def correlation_heatmap(df: pd.DataFrame, h=10, w=10, cmap="coolwarm"):
     df = df.select_dtypes("number")
     correlations = df.corr()
 
-    fig, ax = plt.subplots(figsize=(h, w))
+    _, _ = plt.subplots(figsize=(h, w))
     sns.heatmap(
         correlations,
         vmin=-1.0,
@@ -61,7 +61,7 @@ def heatmap(correlations, h=10, w=10, cmap="coolwarm"):
         None
     """
 
-    fig, ax = plt.subplots(figsize=(h, w))
+    _, _ = plt.subplots(figsize=(h, w))
     sns.heatmap(
         correlations,
         vmin=-1.0,
@@ -79,7 +79,7 @@ def heatmap(correlations, h=10, w=10, cmap="coolwarm"):
 
 # histogram and normal probability plot
 def probplts(y):
-    f, (ax_top, ax_bot) = plt.subplots(2, figsize=(6, 11))
+    _, (ax_top, _) = plt.subplots(2, figsize=(6, 11))
     plt.subplots_adjust(hspace=0.4)
     sns.distplot(y, fit=norm, ax=ax_top)
     ax_top.set_title("Distribution plot")
@@ -88,8 +88,7 @@ def probplts(y):
     ax_top.axvline(y.median(), color="g", linestyle="-", label="Median")
     ax_top.legend()
 
-    # fig = plt.figure()
-    res = stats.probplot(y, plot=plt)
+    stats.probplot(y, plot=plt)
 
     plt.show()
     return plt
@@ -109,7 +108,7 @@ def pred_error_plt(y_pred, y_test, rng_min=0, rng_max=200):
     error = y_pred - y_test
 
     # Initialize figure
-    fig, (ax1, ax2) = plt.subplots(
+    _, (ax1, ax2) = plt.subplots(
         2, 1, sharex=True, figsize=(15, 7), gridspec_kw={"height_ratios": [1.4, 1]}
     )
 

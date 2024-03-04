@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from DSUtils.data import (
+from dsutils.data import (
     data_overview,
     generate_target_bins,
     missing_data,

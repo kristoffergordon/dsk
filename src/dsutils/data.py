@@ -77,11 +77,12 @@ def return_matches(a, b):
 
 
 def reduce_mem_usage(df, verbose=True):
+    """Method for reducing memory usage of a pandas dataframe"""
     if not isinstance(df, pd.DataFrame):
         raise TypeError("df must be a pandas dataframe")
 
     start_mem = df.memory_usage().sum() / 1024**2
-    df = convert_df(df)
+    df = _convert_df(df)
     end_mem = df.memory_usage().sum() / 1024**2
 
     if verbose:
@@ -91,25 +92,28 @@ def reduce_mem_usage(df, verbose=True):
     return df
 
 
-def convert_df(df):
+def _convert_df(df):
+    """Method for converting a pandas dataframe to the smallest possible data type"""
     numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
     for col in df.columns:
         col_type = df[col].dtypes
         if col_type in numerics:
-            df[col] = convert_col(df[col], col_type)
+            df[col] = _convert_col(df[col], col_type)
     return df
 
 
-def convert_col(col, col_type):
+def _convert_col(col, col_type):
+    """Method for converting a pandas column to the smallest possible data type"""
     c_min = col.min()
     c_max = col.max()
     if str(col_type).startswith("int"):
-        return convert_int_col(col, c_min, c_max)
+        return _convert_int_col(col, c_min, c_max)
     else:
-        return convert_float_col(col, c_min, c_max)
+        return _convert_float_col(col, c_min, c_max)
 
 
-def convert_int_col(col, c_min, c_max):
+def _convert_int_col(col, c_min, c_max):
+    """Method for converting a pandas integer column to the smallest possible data type"""
     if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
         return col.astype(np.int8)
     elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
@@ -122,7 +126,8 @@ def convert_int_col(col, c_min, c_max):
         return col
 
 
-def convert_float_col(col, c_min, c_max):
+def _convert_float_col(col, c_min, c_max):
+    """Method for converting a pandas float column to the smallest possible data type"""
     if c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
         return col.astype(np.float16)
     elif c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
