@@ -1,13 +1,14 @@
 import numpy as np
 import pandas as pd
 import pytest
-from DSUtils.data import (
+
+from dsutils.data import (
     data_overview,
     generate_target_bins,
     missing_data,
     reduce_mem_usage,
-    returnMatches,
-    returnNotMatches,
+    return_matches,
+    return_not_matches,
 )
 
 
@@ -65,24 +66,24 @@ def test_missing_data():
     assert missing["Percent"].tolist() == [20.0, 0.0, 0.0, 0.0]
 
 
-def test_returnNotMatches():
-    """Test returnNotMatches method"""
+def test_return_not_matches():
+    """Test return_not_matches method"""
 
     a = [1, 2, 3, 4, 5]
     b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    not_matches = returnNotMatches(a, b)
+    not_matches = return_not_matches(a, b)
 
     assert not_matches == [6, 7, 8, 9, 10]
 
 
-def test_returnMatches():
-    """Test returnMatches method"""
+def test_return_matches():
+    """Test return_matches method"""
 
     a = [1, 2, 3, 4, 5]
     b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    matches = returnMatches(a, b)
+    matches = return_matches(a, b)
 
     assert matches == [1, 2, 3, 4, 5]
 
