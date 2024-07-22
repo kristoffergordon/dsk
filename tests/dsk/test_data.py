@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from dsutils import data
+from dsk import data
 
 
 def test_data_overview():
