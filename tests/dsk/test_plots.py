@@ -3,7 +3,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 
-from dsutils import plots
+from dsk import plots
 
 rng = np.random.default_rng(2021)
 df = pd.DataFrame(rng.random((10, 5)), columns=["A", "B", "C", "D", "E"])

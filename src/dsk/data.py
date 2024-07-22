@@ -113,7 +113,7 @@ def _convert_col(col, col_type):
 
 
 def _convert_int_col(col, c_min, c_max):
-    """Method for converting a pandas integer column to the smallest possible data type"""
+    """Method for converting a pandas int column to the smallest possible data type"""
     if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
         return col.astype(np.int8)
     elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:

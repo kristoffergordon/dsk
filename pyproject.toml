@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "dsutils"
+name = "dsk"
 version = "0.1.0"
-description = "A package with utility tools for DS"
+description = "A comprehensive toolkit for various data science tasks"
 authors = ["Kristoffer <krg@2021.ai>"]
 license = "MIT"
 
