@@ -2,14 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from dsutils.data import (
-    data_overview,
-    generate_target_bins,
-    missing_data,
-    reduce_mem_usage,
-    return_matches,
-    return_not_matches,
-)
+from dsutils import data
 
 
 def test_data_overview():
@@ -24,10 +17,10 @@ def test_data_overview():
         }
     )
 
-    overview = data_overview(df, sort_by_missing=True)
+    overview = data.data_overview(df, sort_by_missing=True)
 
     with pytest.raises(TypeError):
-        data_overview("df")
+        data.data_overview("df")
 
     assert overview.shape == (4, 5)
     assert overview.index.tolist() == ["D", "A", "B", "C"]
@@ -57,7 +50,7 @@ def test_missing_data():
         }
     )
 
-    missing = missing_data(df)
+    missing = data.missing_data(df)
 
     assert missing.shape == (4, 2)
     assert missing.index.tolist() == ["D", "A", "B", "C"]
@@ -72,7 +65,7 @@ def test_return_not_matches():
     a = [1, 2, 3, 4, 5]
     b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    not_matches = return_not_matches(a, b)
+    not_matches = data.return_not_matches(a, b)
 
     assert not_matches == [6, 7, 8, 9, 10]
 
@@ -83,7 +76,7 @@ def test_return_matches():
     a = [1, 2, 3, 4, 5]
     b = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    matches = return_matches(a, b)
+    matches = data.return_matches(a, b)
 
     assert matches == [1, 2, 3, 4, 5]
 
@@ -104,10 +97,10 @@ def test_reduce_mem_usage():
         }
     )
 
-    df = reduce_mem_usage(df, verbose=True)
+    df = data.reduce_mem_usage(df, verbose=True)
 
     with pytest.raises(TypeError):
-        reduce_mem_usage("df")
+        data.reduce_mem_usage("df")
 
     assert df["A"].dtype == np.int8
     assert df["B"].dtype == np.int16
@@ -133,22 +126,22 @@ def test_generate_target_bins():
 
     # Ensure target is in df
     with pytest.raises(KeyError):
-        generate_target_bins([-1, 2, 4, np.inf], df, "E")
+        data.generate_target_bins([-1, 2, 4, np.inf], df, "E")
 
     # Ensure bins are a list
     with pytest.raises(TypeError):
-        generate_target_bins(-1, df, "A")
+        data.generate_target_bins(-1, df, "A")
 
     # Ensure target is numeric
     with pytest.raises(TypeError):
-        generate_target_bins([1, 2, 3], df, "B")
+        data.generate_target_bins([1, 2, 3], df, "B")
 
     # Ensure bins are increasing monotonically
     with pytest.raises(ValueError):
-        generate_target_bins([1, 2, 3, 1], df, "A")
+        data.generate_target_bins([1, 2, 3, 1], df, "A")
 
-    df = generate_target_bins([-1, 2, 4, np.inf], df, "A")
+    df = data.generate_target_bins([-1, 2, 4, np.inf], df, "A")
     assert df["A_bins"].tolist() == ["0-2", "0-2", "3-4", "3-4", "5+"]
 
-    df = generate_target_bins([-1, 1, 3], df, "A")
+    df = data.generate_target_bins([-1, 1, 3], df, "A")
     assert df["A_bins"].tolist() == ["0-1", "2-3", "2-3", np.nan, np.nan]
