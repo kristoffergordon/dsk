@@ -14,6 +14,6 @@ allow_dirty = true  # Add this line to allow bumping with uncommitted changes
 search = 'version = "{current_version}"'
 replace = 'version = "{new_version}"'
 
-#[tool.bumpversion.file."src/dsk/__init__.py"]
-#search = '__version__ = "{current_version}"'
-#replace = '__version__ = "{new_version}"'
+[tool.bumpversion.file."src/dsk/__init__.py"]
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
