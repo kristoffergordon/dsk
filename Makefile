@@ -17,7 +17,7 @@ install:
 
 .PHONY: bump
 bump:  ## Bump the patch version of the project
-	@poetry run bump2version patch
+	@poetry run bump-my-version bump patch
 
 .PHONY: coverage
 coverage:  ## Run pytest with coverage

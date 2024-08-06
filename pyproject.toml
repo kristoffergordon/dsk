@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dsk"
-version = "0.1.0"
+version = "0.1.5"
 description = "A comprehensive toolkit for various data science tasks"
 authors = ["Kristoffer <krg@2021.ai>"]
 license = "MIT"
@@ -13,14 +13,17 @@ matplotlib = "^3.8.3"
 seaborn = "^0.13.2"
 scipy = "^1.12.0"
 scikit-learn = "^1.4.1"
+bump-my-version = "^0.24.3"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^6.29.3"
 pytest = "^8.1.0"
 pytest-cov = "^4.1.0"
 pre-commit = "^3.6.2"
-bump2version = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+bump = "scripts.version:bump"
