@@ -1,3 +1,3 @@
 """DataScienceKit (DSK) initialization."""
 
-__version__ = "0.1.33"
+__version__ = "0.1.10"
