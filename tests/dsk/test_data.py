@@ -14,6 +14,7 @@ def test_data_overview():
             "B": ["a", "b", "c", "d", "e"],
             "C": [3, "b", 5, "d", 7],
             "D": [1.0, 2.0, np.nan, 4.0, 5.0],
+            "E": [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]],
         }
     )
 
@@ -36,6 +37,7 @@ def test_data_overview():
     assert overview["dtype"].tolist() == [float, int, object, object]
     assert overview["Count missing"].tolist() == [1, 0, 0, 0]
     assert overview["Pct. missing"].tolist() == [20.0, 0.0, 0.0, 0.0]
+    assert "E" not in overview.index
 
 
 def test_missing_data():
