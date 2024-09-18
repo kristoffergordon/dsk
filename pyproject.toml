@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dsk"
-version = "0.1.5"
+version = "0.1.6"
 description = "A comprehensive toolkit for various data science tasks"
 authors = ["Kristoffer <krg@2021.ai>"]
 license = "MIT"

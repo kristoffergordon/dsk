@@ -25,6 +25,9 @@ def data_overview(df, sort_by_missing=False):
     if not isinstance(df, pd.DataFrame):
         raise TypeError("df must be a pandas dataframe")
 
+    # Drop columns containing lists
+    df = df.loc[:, ~df.apply(lambda col: col.map(lambda x: isinstance(x, list)).any())]
+
     uniques = df.nunique()
     dtypes = df.dtypes
     total = df.isnull().sum().sort_values()
