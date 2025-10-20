@@ -1,5 +1,3 @@
-from typing import List, Union
-
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
@@ -19,20 +17,20 @@ class Step:
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         raise NotImplementedError
 
-    def fit_transform(self, df) -> pd.DataFrame:
+    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         self.fit(df)
         return self.transform(df)
 
-    def inverse_transform(self, df) -> pd.DataFrame:
+    def inverse_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         return df
 
 
 class StandardizeScaler(Step):
     """Standardize data to zero mean and unit std."""
 
-    def __init__(self, col_in, col_out):
-        self.col_in = col_in
-        self.col_out = col_out
+    def __init__(self, col_in: str | list[str], col_out: str | list[str]):
+        self.col_in = [col_in] if isinstance(col_in, str) else col_in
+        self.col_out = [col_out] if isinstance(col_out, str) else col_out
         self._std = None
         self._mean = None
 
@@ -41,14 +39,14 @@ class StandardizeScaler(Step):
         self._mean = df[self.col_in].mean()
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        normalized = (df[self.col_in] - self._mean) / self._std
-        df[self.col_out] = normalized
+        for cin, cout in zip(self.col_in, self.col_out):
+            df[cout] = (df[cin] - self._mean[cin]) / self._std[cin]
         return df
 
-    def inverse_transform(self, df) -> pd.DataFrame:
-        normalized = df[self.col_out].values
-        denormalized = normalized * self._std.values + self._mean.values
-        return pd.DataFrame(denormalized, columns=self.col_in)
+    def inverse_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        for cin, cout in zip(self.col_in, self.col_out):
+            df[cin] = df[cout] * self._std[cin] + self._mean[cin]
+        return df
 
 
 class ClipColumn(Step):
@@ -81,7 +79,7 @@ class BinColumn(Step):
 
 
 class SelectColumns(Step):
-    def __init__(self, cols: Union[str, List[str]], copy=True):
+    def __init__(self, cols: str | list[str], copy=True):
         if isinstance(cols, str):
             cols = [cols]
         self.cols = cols
@@ -104,11 +102,11 @@ class Log1pColumn(Step):
 
     def inverse_transform(self, df) -> pd.DataFrame:
         df[self.col] = np.expm1(df[self.col])
-        return
+        return df
 
 
 class OrdinalEncodeColumns(Step):
-    def __init__(self, cols: Union[str, List[str]]):
+    def __init__(self, cols: str | list[str]):
         if isinstance(cols, str):
             cols = [cols]
         self.cols = cols
@@ -150,7 +148,7 @@ class ReplaceNaNs(Step):
 
 
 class OHE_Columns(Step):
-    def __init__(self, cols: Union[str, List[str]], drop_cat_cols=True):
+    def __init__(self, cols: str | list[str], drop_cat_cols=True):
         if isinstance(cols, str):
             cols = [cols]
         self.cols = cols

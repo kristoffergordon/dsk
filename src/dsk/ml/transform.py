@@ -1,12 +1,10 @@
-from typing import List
-
 import pandas as pd
 
 from dsk.ml.step import Step
 
 
 class Sequential:
-    def __init__(self, steps: List[Step]):
+    def __init__(self, steps: list[Step]):
         self.steps = steps
 
     def fit(self, df: pd.DataFrame) -> None:
