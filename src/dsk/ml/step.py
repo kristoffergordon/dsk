@@ -56,7 +56,18 @@ class StandardizeScaler(Step):
 
 
 class ClipColumn(Step):
-    def __init__(self, col_in, col_out, lower=None, upper=None):
+    col_in: str
+    col_out: str
+    lower: float | None
+    upper: float | None
+
+    def __init__(
+        self,
+        col_in: str,
+        col_out: str,
+        lower: float | None = None,
+        upper: float | None = None,
+    ):
         self.col_in = col_in
         self.col_out = col_out
         self.lower = lower
