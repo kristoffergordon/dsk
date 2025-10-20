@@ -1,3 +1,5 @@
+from typing import cast
+
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
@@ -28,15 +30,19 @@ class Step:
 class StandardizeScaler(Step):
     """Standardize data to zero mean and unit std."""
 
+    col_in: list[str]
+    col_out: list[str]
+
     def __init__(self, col_in: str | list[str], col_out: str | list[str]):
         self.col_in = [col_in] if isinstance(col_in, str) else col_in
         self.col_out = [col_out] if isinstance(col_out, str) else col_out
-        self._std = None
-        self._mean = None
+        self._std: pd.Series = pd.Series(dtype=float)
+        self._mean: pd.Series = pd.Series(dtype=float)
 
     def fit(self, df: pd.DataFrame) -> None:
-        self._std = df[self.col_in].std()
-        self._mean = df[self.col_in].mean()
+        # Ensure Series by operating on a DataFrame slice with a list of columns
+        self._std = cast(pd.Series, df[self.col_in].std(numeric_only=True))
+        self._mean = cast(pd.Series, df[self.col_in].mean(numeric_only=True))
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         for cin, cout in zip(self.col_in, self.col_out):
@@ -46,7 +52,7 @@ class StandardizeScaler(Step):
     def inverse_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         for cin, cout in zip(self.col_in, self.col_out):
             df[cin] = df[cout] * self._std[cin] + self._mean[cin]
-        return df
+        return df.loc[:, self.col_in]
 
 
 class ClipColumn(Step):
