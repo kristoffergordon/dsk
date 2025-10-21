@@ -4,7 +4,7 @@ import glob
 import os
 import pathlib
 import pickle
-from typing import Tuple
+from datetime import datetime
 
 import pandas as pd
 
@@ -52,7 +52,7 @@ class MLModel:
         return pathlib.Path(fn)
 
     @classmethod
-    def load_newest_model(cls, folder) -> Tuple[MLModel, pathlib.Path]:
+    def load_newest_model(cls, folder) -> tuple[MLModel, pathlib.Path]:
         fns = cls._saved_models(folder)
         if not fns:
             raise ValueError("No models found")
@@ -61,14 +61,17 @@ class MLModel:
         return model, fns[-1]
 
     @classmethod
-    def load_newest_dataset(cls, folder) -> Tuple[MLModel, pathlib.Path]:
+    def load_newest_dataset(cls, folder) -> tuple[pd.DataFrame, pathlib.Path]:
         fns = cls._saved_datasets(folder)
         if not fns:
             raise ValueError("No models found")
-        return pd.read_parquet(fns[-1]), fns[-1]
+        df: pd.DataFrame = pd.read_parquet(fns[-1])
+        return df, fns[-1]
 
     @classmethod
     def _get_model_name(cls, model, subfolder):
+        if cls.model_name is None:
+            raise ValueError("model_name is not set")
         return os.path.join(model, "models", cls.model_name, subfolder, "model.pkl")
 
     @classmethod
@@ -86,5 +89,5 @@ class MLModel:
         return list(sorted([pathlib.Path(fn) for fn in glob.glob(pattern)]))
 
     @staticmethod
-    def _get_timestr():
-        return pd.Timestamp("now").strftime("%Y%m%d-%H%_M_%S_%f")
+    def _get_timestr() -> str:
+        return datetime.now().strftime("%Y%m%d-%H%M%S-%f")
