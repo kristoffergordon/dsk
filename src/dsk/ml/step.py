@@ -79,7 +79,7 @@ class ClipColumn(Step):
 
 
 class BinColumn(Step):
-    def __init__(self, col, n_bins):
+    def __init__(self, col: str, n_bins: int):
         self.col = col
         self.n_bins = n_bins
         self.bins = None
@@ -90,7 +90,7 @@ class BinColumn(Step):
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         dt_bins = pd.cut(x=df[self.col], bins=self.bins, include_lowest=True)
-        dt_bins_center = dt_bins.map(lambda x: x.mid)
+        dt_bins_center = pd.Series(dt_bins).map(lambda x: x.mid)
         df[self.col] = dt_bins_center
         return df
 
@@ -103,10 +103,12 @@ class SelectColumns(Step):
         self.copy = copy
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df[self.cols]
+        result = df[self.cols]
+        if isinstance(result, pd.Series):
+            result = result.to_frame()
         if self.copy:
-            df = df.copy()
-        return df
+            result = result.copy()
+        return result
 
 
 class Log1pColumn(Step):
