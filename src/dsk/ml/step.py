@@ -146,12 +146,12 @@ class OrdinalEncodeColumns(Step):
             col: {v: k for k, v in d.items()} for col, d in self.encoding.items()
         }
         for col in self.cols:
-            df[col] = df[col].map(inverse_encoding[col])
+            df[col] = df[col].replace(inverse_encoding[col])
         return df
 
 
 class ReplaceNaNs(Step):
-    def __init__(self, numeric_nan, string_nan):
+    def __init__(self, numeric_nan: int | float, string_nan: str):
         self.numeric_nan = numeric_nan
         self.string_nan = string_nan
 
